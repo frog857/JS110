@@ -161,6 +161,7 @@ while (true) {
   while (playerScore < MATCH_WINNING_NUMBER && computerScore < MATCH_WINNING_NUMBER) {
     let board = initializeBoard();
     while (true) {
+      console.log(`Your score is: ${playerScore}\nComputer's score is ${computerScore}`);
       displayBoard(board);
 
       playerChoosesSquare(board);
@@ -192,9 +193,10 @@ while (true) {
     let answer = rlSync.question().toLowerCase()[0];
     if (answer !== 'y') break;
     }
-  prompt('Play again? (y or n)');
-  let answer = rlSync.question().toLowerCase()[0];
-  if (answer !== 'y') break;
+  break;
+  // prompt('Play again? (y or n)');
+  // let answer = rlSync.question().toLowerCase()[0];
+  // if (answer !== 'y') break;
 }
 
 prompt('Thanks for playing Tic Tac Toe!');
