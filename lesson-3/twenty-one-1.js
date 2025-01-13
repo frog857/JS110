@@ -9,6 +9,20 @@ function prompt(msg) {
   console.log("=> " + msg);
 }
 
+function joinAnd(arr, punctuation = ", ", word = "and") {
+  let outputStr = "";
+  if (arr.length === 1) return String(arr[0]);
+  if (arr.length === 2) return `${String(arr[0])} ${word} ${String(arr[1])}`;
+  arr.forEach((el, idx) => {
+   if (idx !== arr.length - 1) {
+     outputStr += String(arr[idx]) + punctuation;
+   } else if (idx === arr.length - 1) {
+     outputStr += word + " " + String(arr[idx]);
+   }
+  })
+  return outputStr;
+}
+
 function returnSuit(card) {
   switch (card[0]) {
     case 'H': return 'Hearts';
@@ -33,7 +47,7 @@ function listCards(cards) {
   for (let card of cards) {
     readableCards.push(returnValue(card) + " of " + returnSuit(card));
   }
-  return readableCards.join(", ")
+  return joinAnd(readableCards)
 }
 
 function shuffle(array) {
@@ -86,13 +100,6 @@ function drawFirstCards(deck, playerHand, dealerHand) {
   drawCard(deck, dealerHand);
 }
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function simulateDelay() {
-  await delay(2000);
-}
 
 function topOfScreenDisplay(playerHand, dealerHand, playerChips, wager, playerTotal) {
   console.clear();
@@ -180,13 +187,15 @@ while (true) {
 
     while ((dealerTotal < DEALER_LIMIT) && !playerBust) {
       prompt(`Dealer has: ${listCards(dealerHand)}...`);
-      simulateDelay();
-      prompt("Dealer hits!");
+      setTimeout(function () {
+        prompt("Dealer hits!");
+      }, 2000)
+      //prompt("Dealer hits!");
       drawCard(deck, dealerHand)
       dealerTotal = calculateHand(dealerHand);
 
-      prompt(`Dealer has: ${listCards(dealerHand)}.`)
       if (dealerTotal > TWENTY_ONE) {
+        prompt(`Dealer has: ${listCards(dealerHand)}.`)
         prompt('Dealer busts! You win!\n')
         dealerBust = true;
         playerChips += wager;
@@ -198,7 +207,6 @@ while (true) {
     // display winner for non-bust
     if (!dealerBust && !playerBust) {
       prompt(`Dealer has: ${listCards(dealerHand)}...`);
-      simulateDelay();
       prompt("Dealer Stays!\n")
       prompt(`Your total is ${playerTotal}.`);
       prompt(`Dealer total is ${dealerTotal}.`);

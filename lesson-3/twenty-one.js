@@ -101,21 +101,21 @@ function drawFirstCards(deck, playerHand, dealerHand) {
 }
 
 
-function topOfScreenDisplay(playerHand, dealerHand, playerChips, wager, playerTotal) {
+function topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal = 0, wager = 0) {
   console.clear();
 
   console.log("============");
   console.log(`You have ${playerChips} chips.`);
-  console.log(`Your wager is: ${wager} chips.`);
+  if (wager) console.log(`Your wager is: ${wager} chips.`);
   console.log("------------");
   console.log(`Dealer is showing: ${listCards(dealerHand.slice(0, 1))}.`);
   console.log(`You have: ${listCards(playerHand)}.`);
-  console.log(`Total: ${playerTotal}.`);
+  console.log(`Total: ${playerTotal}`);
   console.log("============\n");
 }
 
+// intro and chip purchasing (outer loop)
 while (true) {
-  // intro and chips
   console.clear()
   prompt("Welcome to twenty-one. How many chips will you buy? (Enter $ amount)");
   let playerChips = Math.floor(Number(rlSync.question()));
@@ -125,6 +125,7 @@ while (true) {
   }
   let initialChips = playerChips;
 
+  // game loop (inner loop)
   while (true) {
     // init deck and draw first cards
     let deck = initializeDeck();
@@ -134,10 +135,13 @@ while (true) {
     let dealerHand = [];
   
     drawFirstCards(deck, playerHand, dealerHand);
+    let playerTotal = calculateHand(playerHand);
+    let dealerTotal = calculateHand(dealerHand);
     console.clear();
 
-    // get wager
-    prompt(`You have ${playerChips} chips.`);
+    // get wager (with cards drawn avail to user for deciding appropriate wager)
+    topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal);
+
     prompt(`What would you like to wager?`);
     let wager = Number(rlSync.question());
     while (isNaN(wager) || wager > playerChips || wager <= 0) {
@@ -151,15 +155,11 @@ while (true) {
       wager = Number(rlSync.question());
     }
 
-    // start of game
-    
-    let playerTotal = calculateHand(playerHand);
-    let dealerTotal = calculateHand(dealerHand);
     let playerBust = false;
     let dealerBust = false;
     // player turn && bust handling
     while (true) {
-      topOfScreenDisplay(playerHand, dealerHand, playerChips, wager, playerTotal);
+      topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
       prompt(`Hit or Stay?`);
       let answer = rlSync.question();
       while (answer.toLowerCase() !== "hit" && answer.toLowerCase() !== "stay") {
@@ -171,7 +171,7 @@ while (true) {
         playerTotal = calculateHand(playerHand);
     
         if (playerTotal > 21) {
-          topOfScreenDisplay(playerHand, dealerHand, playerChips, wager, playerTotal);
+          topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
           prompt('You busted!');
           playerBust = true;
           playerChips -= wager;
@@ -179,7 +179,7 @@ while (true) {
           break;
         }
       } else {
-        topOfScreenDisplay(playerHand, dealerHand, playerChips, wager, playerTotal);
+        topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
         break;
       }
     }
@@ -187,6 +187,7 @@ while (true) {
 
     while ((dealerTotal < DEALER_LIMIT) && !playerBust) {
       prompt(`Dealer has: ${listCards(dealerHand)}...`);
+      // wish I could implement a pause here? To emulate dealer thinking. setTimeout doesn't work.
       prompt("Dealer hits!");
       drawCard(deck, dealerHand)
       dealerTotal = calculateHand(dealerHand);
