@@ -100,7 +100,6 @@ function drawFirstCards(deck, playerHand, dealerHand) {
   drawCard(deck, dealerHand);
 }
 
-
 function topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal = 0, wager = 0) {
   console.clear();
 
@@ -114,8 +113,121 @@ function topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal = 0
   console.log("============\n");
 }
 
-// intro and chip purchasing (outer loop)
-while (true) {
+function playRound(playerChips) {
+  // Init some control flow variables
+  let playerHand = [];
+  let dealerHand = [];
+  let playerBust = false;
+  let dealerBust = false;
+  let playerStay = false;
+  
+  // Init deck and draw first cards
+  let deck = initializeDeck();
+  shuffle(deck);
+  drawFirstCards(deck, playerHand, dealerHand);
+  let playerTotal = calculateHand(playerHand);
+  let dealerTotal = calculateHand(dealerHand);
+  console.clear();
+
+  // Get wager (with dealer and player hand info displayed to user)
+  topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal);
+  prompt(`What would you like to wager?`);
+  let wager = Number(rlSync.question());
+  while (isNaN(wager) || wager > playerChips || wager <= 0) {
+    if (isNaN(wager)) {
+      prompt(`Enter a number.`)
+    } else if (wager > playerChips) {
+      prompt(`You don't have enough chips for that wager. Try again:`)
+    } else if (wager <= 0) {
+      prompt("You must wager at least one chip.") 
+    }
+    wager = Number(rlSync.question());
+  }
+
+  // Player Turn
+  while (!playerStay) {
+    topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+    prompt(`Hit or Stay?`);
+    let answer = rlSync.question();
+
+    while (answer.toLowerCase() !== "hit" && answer.toLowerCase() !== "stay") {
+      prompt("Sorry, what was that?");
+      answer = rlSync.question();
+    }
+
+    if (answer.toLowerCase() === "hit") {
+      drawCard(deck, playerHand);
+      playerTotal = calculateHand(playerHand);
+
+      if (playerTotal > 21) {
+        topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+        prompt('You busted!');
+        playerBust = true;
+        playerChips -= wager;
+        prompt(`You now have ${playerChips} chips.`);
+        break;
+      }
+    } else {
+      playerStay = true;
+      topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+    }
+  }
+
+  // Dealer Turn
+  while ((dealerTotal < DEALER_LIMIT) && !playerBust) {
+    prompt(`Dealer has: ${listCards(dealerHand)}...`);
+    // Wish I could implement a pause here? To emulate the dealer thinking.
+    prompt("Dealer hits!");
+    drawCard(deck, dealerHand)
+    dealerTotal = calculateHand(dealerHand);
+
+    if (dealerTotal > TWENTY_ONE) {
+      prompt(`Dealer has: ${listCards(dealerHand)}.`)
+      prompt('Dealer busts! You win!\n')
+      dealerBust = true;
+      playerChips += wager;
+      prompt(`You now have ${playerChips} chips.`);
+      break;
+    }
+  }
+
+  // Display Winner
+  if (!dealerBust && !playerBust) {
+    prompt(`Dealer has: ${listCards(dealerHand)}...`);
+    prompt("Dealer Stays!\n")
+    prompt(`Your total is ${playerTotal}.`);
+    prompt(`Dealer total is ${dealerTotal}.`);
+
+    if (playerTotal > dealerTotal) {
+      prompt(`You win!\n`);
+      playerChips += wager;
+      prompt(`You now have ${playerChips} chips.`);
+    } else if (playerTotal < dealerTotal) {
+      prompt('You lose!\n')
+      playerChips -= wager;
+      prompt(`You now have ${playerChips} chips.`);
+    } else {
+      prompt("it's a tie!");
+    }
+  }
+
+  // End of Round clean-out check
+  if (playerChips === 0) {
+    console.log("You're out of chips. Game over!");
+    return playerChips;
+  } else {
+    prompt(`play again? y/n`);
+    let answer = rlSync.question();
+    if (answer.toLowerCase() === 'y') {
+      console.clear();
+      return playRound(playerChips);
+    }
+    console.clear();
+  }
+  return playerChips;
+}
+
+function gameLoop() {
   console.clear()
   prompt("Welcome to twenty-one. How many chips will you buy? (Enter $ amount)");
   let playerChips = Math.floor(Number(rlSync.question()));
@@ -123,132 +235,29 @@ while (true) {
     prompt(`Please enter a valid number. (Positive Integer)`);
     playerChips = Math.floor(Number(rlSync.question()));
   }
+
   let initialChips = playerChips;
-
-  // game loop (inner loop)
-  while (true) {
-    // init deck and draw first cards
-    let deck = initializeDeck();
-    shuffle(deck);
-
-    let playerHand = [];
-    let dealerHand = [];
+  playerChips = playRound(playerChips);
   
-    drawFirstCards(deck, playerHand, dealerHand);
-    let playerTotal = calculateHand(playerHand);
-    let dealerTotal = calculateHand(dealerHand);
-    console.clear();
-
-    // get wager (with cards drawn avail to user for deciding appropriate wager)
-    topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal);
-
-    prompt(`What would you like to wager?`);
-    let wager = Number(rlSync.question());
-    while (isNaN(wager) || wager > playerChips || wager <= 0) {
-      if (isNaN(wager)) {
-        prompt(`Enter a number.`)
-      } else if (wager > playerChips) {
-        prompt(`You don't have enough chips for that wager. Try again:`)
-      } else if (wager <= 0) {
-        prompt("You must wager at least one chip.") 
-      }
-      wager = Number(rlSync.question());
-    }
-
-    let playerBust = false;
-    let dealerBust = false;
-    // player turn && bust handling
-    while (true) {
-      topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
-      prompt(`Hit or Stay?`);
-      let answer = rlSync.question();
-      while (answer.toLowerCase() !== "hit" && answer.toLowerCase() !== "stay") {
-        prompt("Sorry, what was that?");
-        answer = rlSync.question();
-      }
-      if (answer.toLowerCase() === "hit") {
-        drawCard(deck, playerHand);
-        playerTotal = calculateHand(playerHand);
-    
-        if (playerTotal > 21) {
-          topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
-          prompt('You busted!');
-          playerBust = true;
-          playerChips -= wager;
-          prompt(`You now have ${playerChips} chips.`);
-          break;
-        }
-      } else {
-        topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
-        break;
-      }
-    }
-    // dealer turn && bust handling
-
-    while ((dealerTotal < DEALER_LIMIT) && !playerBust) {
-      prompt(`Dealer has: ${listCards(dealerHand)}...`);
-      // wish I could implement a pause here? To emulate dealer thinking. setTimeout doesn't work.
-      prompt("Dealer hits!");
-      drawCard(deck, dealerHand)
-      dealerTotal = calculateHand(dealerHand);
-
-      if (dealerTotal > TWENTY_ONE) {
-        prompt(`Dealer has: ${listCards(dealerHand)}.`)
-        prompt('Dealer busts! You win!\n')
-        dealerBust = true;
-        playerChips += wager;
-        prompt(`You now have ${playerChips} chips.`);
-        break;
-      }
-    }
-
-    // display winner for non-bust
-    if (!dealerBust && !playerBust) {
-      prompt(`Dealer has: ${listCards(dealerHand)}...`);
-      prompt("Dealer Stays!\n")
-      prompt(`Your total is ${playerTotal}.`);
-      prompt(`Dealer total is ${dealerTotal}.`);
-
-      if (playerTotal > dealerTotal) {
-        prompt(`You win!\n`);
-        playerChips += wager;
-        prompt(`You now have ${playerChips} chips.`);
-      } else if (playerTotal < dealerTotal) {
-        prompt('You lose!\n')
-        playerChips -= wager;
-        prompt(`You now have ${playerChips} chips.`);
-      } else {
-        prompt("it's a tie!");
-      }
-    }
-    // end round loop: check for clean-out, or ask to play again
-    if (playerChips === 0) {
-      console.log('')
-      break;
-    }
-
-    prompt(`play again? y/n`);
-    let answer = rlSync.question();
-    if (answer.toLowerCase() !== 'y') {
-      console.clear();
-      break;
-    }
-  }
-
+  // console.clear();
+  console.log("============");
   prompt(`You started with ${initialChips} chips.`);
   prompt(`You ended with ${playerChips} chips.\n`);
 
+  // Exit message
   if (playerChips === 0) {
     prompt(`You're out of chips! Better luck next time.`);
     prompt(`Call 1-800-GAMBLER if you have a problem.`);
   } else if (initialChips > playerChips) {
     prompt(`That's a bummer - you lost ${initialChips - playerChips} bucks!`);
-    prompt(`That's ${((initialChips - playerChips)/initialChips) * 100}% of your money :o`);
-
+    prompt(`That's ${((initialChips - playerChips)/initialChips) * 100}% of your money.`);
   } else if (initialChips < playerChips) {
     prompt(`Nice! You won ${playerChips - initialChips} dollars!`);
+    prompt(`Maybe you should go pro?`)
   } else {
     prompt(`Not bad - you broke even!`);
   }
-  break;
+  console.log("\nThanks for playing!\n");
 }
+
+gameLoop();

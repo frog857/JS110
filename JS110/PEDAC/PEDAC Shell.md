@@ -5,7 +5,9 @@
 Problem:
 
 
-Input/Output:
+Input:
+
+Output:
 
 
 Rules:
