@@ -136,26 +136,7 @@ function exitMessage(initialChips, playerChips) {
   console.log("\nThanks for playing!\n");
 }
 
-// eslint-disable-next-line max-lines-per-function, complexity, max-statements
-function playRound(playerChips) {
-  // Init some control flow variables
-  let playerHand = [];
-  let dealerHand = [];
-  let playerBust = false;
-  let dealerBust = false;
-  let playerStay = false;
-
-  // Init deck and draw first cards
-  let deck = initializeDeck();
-  shuffle(deck);
-  drawFirstCards(deck, playerHand, dealerHand);
-  let playerTotal = calculateHand(playerHand);
-  let dealerTotal = calculateHand(dealerHand);
-  console.clear();
-
-  // Get wager (with dealer and player hand info displayed to user)
-  display(playerHand, dealerHand, playerChips, playerTotal);
-  prompt(`What would you like to wager?`);
+function getWager(playerChips) {
   let wager = Number(rlSync.question());
   while (isNaN(wager) || wager > playerChips || wager <= 0) {
     if (isNaN(wager)) {
@@ -167,6 +148,63 @@ function playRound(playerChips) {
     }
     wager = Number(rlSync.question());
   }
+  return wager;
+}
+
+function displayWinner(dealerHand, playerTotal, dealerTotal, playerChips) {
+  prompt(`Dealer has: ${listCards(dealerHand)}...`);
+  prompt("Dealer Stays!\n");
+  prompt(`Your total is ${playerTotal}.`);
+  prompt(`Dealer total is ${dealerTotal}.`);
+
+  if (playerTotal > dealerTotal) {
+    prompt(`You win!\n`);
+    //playerChips += wager;
+    prompt(`You now have ${playerChips} chips.`);
+  } else if (playerTotal < dealerTotal) {
+    prompt('You lose!\n');
+    //playerChips -= wager;
+    prompt(`You now have ${playerChips} chips.`);
+  } else {
+    prompt("it's a tie!");
+  }
+}
+
+function updateScore(playerTotal, dealerTotal, playerChips, wager) {
+  if (playerTotal > dealerTotal) {
+    playerChips += wager;
+  } else if (playerTotal < dealerTotal) {
+    playerChips -= wager;
+  }
+  return playerChips;
+}
+
+function initializeRound(deck, playerHand, dealerHand) {
+  shuffle(deck);
+  drawFirstCards(deck, playerHand, dealerHand);
+}
+
+// eslint-disable-next-line max-lines-per-function, max-statements
+function playRound(playerChips) {
+  // Init some control flow variables
+  let playerHand = [];
+  let dealerHand = [];
+  let deck = initializeDeck();
+
+  let playerBust = false;
+  let dealerBust = false;
+  let playerStay = false;
+
+  // Shuffle deck and draw first cards
+  initializeRound(deck, playerHand, dealerHand);
+  let playerTotal = calculateHand(playerHand);
+  let dealerTotal = calculateHand(dealerHand);
+  console.clear();
+
+  // Get wager (with dealer and player hand info displayed to user)
+  display(playerHand, dealerHand, playerChips, playerTotal);
+  prompt(`What would you like to wager?`);
+  let wager = getWager(playerChips);
 
   // Player Turn
   while (!playerStay) {
@@ -215,24 +253,10 @@ function playRound(playerChips) {
     }
   }
 
-  // Display Winner
+  // Display Winner, updateScore
   if (!dealerBust && !playerBust) {
-    prompt(`Dealer has: ${listCards(dealerHand)}...`);
-    prompt("Dealer Stays!\n");
-    prompt(`Your total is ${playerTotal}.`);
-    prompt(`Dealer total is ${dealerTotal}.`);
-
-    if (playerTotal > dealerTotal) {
-      prompt(`You win!\n`);
-      playerChips += wager;
-      prompt(`You now have ${playerChips} chips.`);
-    } else if (playerTotal < dealerTotal) {
-      prompt('You lose!\n');
-      playerChips -= wager;
-      prompt(`You now have ${playerChips} chips.`);
-    } else {
-      prompt("it's a tie!");
-    }
+    playerChips = updateScore(playerTotal, dealerTotal, playerChips, wager);
+    displayWinner(dealerHand, playerTotal, dealerTotal, playerChips);
   }
 
   // End of Round clean-out check
