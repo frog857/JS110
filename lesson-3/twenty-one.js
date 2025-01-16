@@ -14,12 +14,12 @@ function joinAnd(arr, punctuation = ", ", word = "and") {
   if (arr.length === 1) return String(arr[0]);
   if (arr.length === 2) return `${String(arr[0])} ${word} ${String(arr[1])}`;
   arr.forEach((el, idx) => {
-   if (idx !== arr.length - 1) {
-     outputStr += String(arr[idx]) + punctuation;
-   } else if (idx === arr.length - 1) {
-     outputStr += word + " " + String(arr[idx]);
-   }
-  })
+    if (idx !== arr.length - 1) {
+      outputStr += String(el) + punctuation;
+    } else if (idx === arr.length - 1) {
+      outputStr += word + " " + String(el);
+    }
+  });
   return outputStr;
 }
 
@@ -30,6 +30,7 @@ function returnSuit(card) {
     case 'D': return 'Diamonds';
     case 'C': return 'Clubs';
   }
+  return undefined;
 }
 
 function returnValue(card) {
@@ -43,11 +44,11 @@ function returnValue(card) {
 }
 
 function listCards(cards) {
-  let readableCards = []
+  let readableCards = [];
   for (let card of cards) {
     readableCards.push(returnValue(card) + " of " + returnSuit(card));
   }
-  return joinAnd(readableCards)
+  return joinAnd(readableCards);
 }
 
 function shuffle(array) {
@@ -65,7 +66,7 @@ function initializeDeck() {
   let deck = [];
   for (let suit of SUITS) {
     for (let value of VALUES) {
-      deck.push([suit, value])
+      deck.push([suit, value]);
     }
   }
   return deck;
@@ -76,13 +77,13 @@ function calculateHand(cards) {
 
   let sum = 0;
   for (let value of values) {
-    let faceCards = "KQJ"
+    let faceCards = "KQJ";
     if (faceCards.includes(value)) {
       sum += 10;
     } else if ('A' === value) {
       sum += 11;
     } else {
-      sum += Number(value)
+      sum += Number(value);
     }
   }
 
@@ -100,7 +101,8 @@ function drawFirstCards(deck, playerHand, dealerHand) {
   drawCard(deck, dealerHand);
 }
 
-function topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal = 0, wager = 0) {
+function display(
+  playerHand, dealerHand, playerChips, playerTotal = 0, wager = 0) {
   console.clear();
 
   console.log("============");
@@ -113,6 +115,28 @@ function topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal = 0
   console.log("============\n");
 }
 
+function exitMessage(initialChips, playerChips) {
+  console.log("============");
+  prompt(`You started with ${initialChips} chips.`);
+  prompt(`You ended with ${playerChips} chips.\n`);
+
+  // Exit message
+  if (playerChips === 0) {
+    prompt(`You're out of chips! Better luck next time.`);
+    prompt(`Call 1-800-GAMBLER if you have a problem.`);
+  } else if (initialChips > playerChips) {
+    prompt(`That's a bummer - you lost ${initialChips - playerChips} bucks!`);
+    prompt(`That's ${((initialChips - playerChips) / initialChips) * 100}% of your money.`);
+  } else if (initialChips < playerChips) {
+    prompt(`Nice! You won ${playerChips - initialChips} dollars!`);
+    prompt(`Maybe you should go pro?`);
+  } else {
+    prompt(`Not bad - you broke even!`);
+  }
+  console.log("\nThanks for playing!\n");
+}
+
+// eslint-disable-next-line max-lines-per-function, complexity, max-statements
 function playRound(playerChips) {
   // Init some control flow variables
   let playerHand = [];
@@ -120,7 +144,7 @@ function playRound(playerChips) {
   let playerBust = false;
   let dealerBust = false;
   let playerStay = false;
-  
+
   // Init deck and draw first cards
   let deck = initializeDeck();
   shuffle(deck);
@@ -130,23 +154,23 @@ function playRound(playerChips) {
   console.clear();
 
   // Get wager (with dealer and player hand info displayed to user)
-  topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal);
+  display(playerHand, dealerHand, playerChips, playerTotal);
   prompt(`What would you like to wager?`);
   let wager = Number(rlSync.question());
   while (isNaN(wager) || wager > playerChips || wager <= 0) {
     if (isNaN(wager)) {
-      prompt(`Enter a number.`)
+      prompt(`Enter a number.`);
     } else if (wager > playerChips) {
-      prompt(`You don't have enough chips for that wager. Try again:`)
+      prompt(`You don't have enough chips for that wager. Try again:`);
     } else if (wager <= 0) {
-      prompt("You must wager at least one chip.") 
+      prompt("You must wager at least one chip.");
     }
     wager = Number(rlSync.question());
   }
 
   // Player Turn
   while (!playerStay) {
-    topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+    display(playerHand, dealerHand, playerChips, playerTotal, wager);
     prompt(`Hit or Stay?`);
     let answer = rlSync.question();
 
@@ -160,7 +184,7 @@ function playRound(playerChips) {
       playerTotal = calculateHand(playerHand);
 
       if (playerTotal > 21) {
-        topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+        display(playerHand, dealerHand, playerChips, playerTotal, wager);
         prompt('You busted!');
         playerBust = true;
         playerChips -= wager;
@@ -169,7 +193,7 @@ function playRound(playerChips) {
       }
     } else {
       playerStay = true;
-      topOfScreenDisplay(playerHand, dealerHand, playerChips, playerTotal, wager);
+      display(playerHand, dealerHand, playerChips, playerTotal, wager);
     }
   }
 
@@ -178,12 +202,12 @@ function playRound(playerChips) {
     prompt(`Dealer has: ${listCards(dealerHand)}...`);
     // Wish I could implement a pause here? To emulate the dealer thinking.
     prompt("Dealer hits!");
-    drawCard(deck, dealerHand)
+    drawCard(deck, dealerHand);
     dealerTotal = calculateHand(dealerHand);
 
     if (dealerTotal > TWENTY_ONE) {
-      prompt(`Dealer has: ${listCards(dealerHand)}.`)
-      prompt('Dealer busts! You win!\n')
+      prompt(`Dealer has: ${listCards(dealerHand)}.`);
+      prompt('Dealer busts! You win!\n');
       dealerBust = true;
       playerChips += wager;
       prompt(`You now have ${playerChips} chips.`);
@@ -194,7 +218,7 @@ function playRound(playerChips) {
   // Display Winner
   if (!dealerBust && !playerBust) {
     prompt(`Dealer has: ${listCards(dealerHand)}...`);
-    prompt("Dealer Stays!\n")
+    prompt("Dealer Stays!\n");
     prompt(`Your total is ${playerTotal}.`);
     prompt(`Dealer total is ${dealerTotal}.`);
 
@@ -203,7 +227,7 @@ function playRound(playerChips) {
       playerChips += wager;
       prompt(`You now have ${playerChips} chips.`);
     } else if (playerTotal < dealerTotal) {
-      prompt('You lose!\n')
+      prompt('You lose!\n');
       playerChips -= wager;
       prompt(`You now have ${playerChips} chips.`);
     } else {
@@ -228,9 +252,11 @@ function playRound(playerChips) {
 }
 
 function gameLoop() {
-  console.clear()
+  console.clear();
+
   prompt("Welcome to twenty-one. How many chips will you buy? (Enter $ amount)");
   let playerChips = Math.floor(Number(rlSync.question()));
+
   while (isNaN(playerChips) || playerChips < 1) {
     prompt(`Please enter a valid number. (Positive Integer)`);
     playerChips = Math.floor(Number(rlSync.question()));
@@ -238,26 +264,8 @@ function gameLoop() {
 
   let initialChips = playerChips;
   playerChips = playRound(playerChips);
-  
-  // console.clear();
-  console.log("============");
-  prompt(`You started with ${initialChips} chips.`);
-  prompt(`You ended with ${playerChips} chips.\n`);
 
-  // Exit message
-  if (playerChips === 0) {
-    prompt(`You're out of chips! Better luck next time.`);
-    prompt(`Call 1-800-GAMBLER if you have a problem.`);
-  } else if (initialChips > playerChips) {
-    prompt(`That's a bummer - you lost ${initialChips - playerChips} bucks!`);
-    prompt(`That's ${((initialChips - playerChips)/initialChips) * 100}% of your money.`);
-  } else if (initialChips < playerChips) {
-    prompt(`Nice! You won ${playerChips - initialChips} dollars!`);
-    prompt(`Maybe you should go pro?`)
-  } else {
-    prompt(`Not bad - you broke even!`);
-  }
-  console.log("\nThanks for playing!\n");
+  exitMessage(initialChips, playerChips);
 }
 
 gameLoop();
