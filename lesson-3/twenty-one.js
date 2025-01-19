@@ -102,7 +102,12 @@ function drawFirstCards(deck, playerHand, dealerHand) {
 }
 
 function display(
-  playerHand, dealerHand, playerChips, playerTotal = 0, wager = 0) {
+  playerHand,
+  dealerHand,
+  playerChips,
+  playerTotal = 0,
+  wager = 0
+) {
   console.clear();
 
   console.log("============");
@@ -191,9 +196,9 @@ function playRound(playerChips) {
   let dealerHand = [];
   let deck = initializeDeck();
 
-  let playerBust = false;
-  let dealerBust = false;
-  let playerStay = false;
+  let hasPlayerBusted = false;
+  let hasDealerBusted = false;
+  let hasPlayerStayed = false;
 
   // Shuffle deck and draw first cards
   initializeRound(deck, playerHand, dealerHand);
@@ -207,7 +212,7 @@ function playRound(playerChips) {
   let wager = getWager(playerChips);
 
   // Player Turn
-  while (!playerStay) {
+  while (!hasPlayerStayed) {
     display(playerHand, dealerHand, playerChips, playerTotal, wager);
     prompt(`Hit or Stay?`);
     let answer = rlSync.question();
@@ -224,37 +229,38 @@ function playRound(playerChips) {
       if (playerTotal > 21) {
         display(playerHand, dealerHand, playerChips, playerTotal, wager);
         prompt('You busted!');
-        playerBust = true;
+        hasPlayerBusted = true;
         playerChips -= wager;
         prompt(`You now have ${playerChips} chips.`);
         break;
       }
     } else {
-      playerStay = true;
+      hasPlayerStayed = true;
       display(playerHand, dealerHand, playerChips, playerTotal, wager);
     }
   }
 
   // Dealer Turn
-  while ((dealerTotal < DEALER_LIMIT) && !playerBust) {
-    prompt(`Dealer has: ${listCards(dealerHand)}...`);
-    // Wish I could implement a pause here? To emulate the dealer thinking.
-    prompt("Dealer hits!");
-    drawCard(deck, dealerHand);
-    dealerTotal = calculateHand(dealerHand);
-
-    if (dealerTotal > TWENTY_ONE) {
-      prompt(`Dealer has: ${listCards(dealerHand)}.`);
-      prompt('Dealer busts! You win!\n');
-      dealerBust = true;
-      playerChips += wager;
-      prompt(`You now have ${playerChips} chips.`);
-      break;
+  if (!hasPlayerBusted) {
+    while ((dealerTotal < DEALER_LIMIT)) {
+      prompt(`Dealer has: ${listCards(dealerHand)}...`);
+      // Wish I could implement a pause here? To emulate the dealer thinking.
+      prompt("Dealer hits!");
+      drawCard(deck, dealerHand);
+      dealerTotal = calculateHand(dealerHand);
+      if (dealerTotal > TWENTY_ONE) {
+        prompt(`Dealer has: ${listCards(dealerHand)}.`);
+        prompt('Dealer busts! You win!\n');
+        hasDealerBusted = true;
+        playerChips += wager;
+        prompt(`You now have ${playerChips} chips.`);
+        break;
+      }
     }
   }
 
   // Display Winner, updateScore
-  if (!dealerBust && !playerBust) {
+  if (!hasDealerBusted && !hasPlayerBusted) {
     playerChips = updateScore(playerTotal, dealerTotal, playerChips, wager);
     displayWinner(dealerHand, playerTotal, dealerTotal, playerChips);
   }

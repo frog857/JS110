@@ -2,24 +2,17 @@
 
 ```javascript
 /*
-Problem:
+P:
 
 
-Input:
-
-Output:
+E:
 
 
-Rules:
+D:
 
 
-Questions:
+A:
 
-
-Data Structure:
-
-
-Algorithm:
 
 */
 ```
