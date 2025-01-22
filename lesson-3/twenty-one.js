@@ -87,7 +87,7 @@ function calculateHand(cards) {
     }
   }
 
-  values.filter(value => value === "A").forEach(ace => {
+  values.filter(value => value === "A").forEach(() => {
     if (sum > 21) sum -= 10;
   });
 

@@ -40,10 +40,11 @@ A:
 function longestPalindromicSubstring(str) {
   let palindromeArr = [];
   let trimmedStr = str.toLowerCase().replace(/\s+/g, '');
+
   console.log(trimmedStr);
-  for (let i = 0; i < trimmedStr.length; i++) {
-    for (let j = i; j < trimmedStr.length + 1; j++) {
-      let substr = trimmedStr.slice(i, j);
+  for (let idx = 0; idx < trimmedStr.length; idx++) {
+    for (let jdx = idx; jdx < trimmedStr.length + 1; jdx++) {
+      let substr = trimmedStr.slice(idx, jdx);
       console.log(substr);
       if (isPalindrome(substr)) {
         palindromeArr.push(substr);
@@ -73,10 +74,6 @@ function isPalindrome(str) {
 console.log(isPalindrome("toot")); // true
 console.log(isPalindrome("torent")); // false
 console.log(isPalindrome("madam")); // true
-
-
-
-
 
 /*
 P:
