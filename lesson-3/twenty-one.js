@@ -197,8 +197,6 @@ function initializeRound(deck, playerHand, dealerHand) {
   drawFirstCards(deck, playerHand, dealerHand);
 }
 
-// eslint-disable-next-line max-lines-per-function, max-statements
-
 function isBusted(hand) {
   return calculateHand(hand) > TWENTY_ONE;
 }
@@ -278,7 +276,6 @@ function gameLoop() {
 
   exitMessage(initialChips, playerChips);
 }
-
 
 // eslint-disable-next-line max-lines-per-function, max-statements
 function playRound(playerChips) {
