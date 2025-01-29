@@ -44,6 +44,45 @@ function advancedSort(arr) {
   return solutionArr;
 }
 
-console.log(advancedSort([2, 1, 2, 1]))// ➞ [[2, 2], [1, 1]]
-console.log(advancedSort([5, 4, 5, 5, 4, 3]))// ➞ [[5, 5, 5], [4, 4], [3]]
-console.log(advancedSort(["b", "a", "b", "a", "c"]))// ➞ [["b", "b"], ["a", "a"], ["c"]]
+// console.log(advancedSort([2, 1, 2, 1]))// ➞ [[2, 2], [1, 1]]
+// console.log(advancedSort([5, 4, 5, 5, 4, 3]))// ➞ [[5, 5, 5], [4, 4], [3]]
+// console.log(advancedSort(["b", "a", "b", "a", "c"]))// ➞ [["b", "b"], ["a", "a"], ["c"]]
+
+
+function _advancedSort(arr) {
+  return Object.values(arr.reduce((acc, el) => {
+    console.log(acc[el]);
+    acc[el] = acc[el] || [];
+    console.log(acc[el], acc);
+    acc[el].push(el);
+    console.log(acc);
+    return acc;
+  }, {}));
+}
+
+//console.log(_advancedSort([2, 1, 2, 1])); // ➞ [[2, 2], [1, 1]]
+//console.log(_advancedSort([5, 4, 5, 5, 4, 3])); // ➞ [[5, 5, 5], [4, 4], [3]]
+//console.log(_advancedSort(["b", "a", "b", "a", "c"])); // ➞ [["b", "b"], ["a", "a"], ["c"]]
+
+
+function __advancedSort(arr) {
+  const map = new Map();
+  console.log(map)
+
+  for (const el of arr) {
+    // If the key doesn't exist, create an entry with the current element as the key
+    if (!map.has(el)) {
+      map.set(el, []);
+    }
+    // Push the current element into the array associated with its key
+    map.get(el).push(el);
+  }
+  console.log(map)
+  // Convert the values of the Map to an array
+  return Array.from(map.values());
+}
+
+
+console.log(__advancedSort([2, 1, 2, 1])); // ➞ [[2, 2], [1, 1]]
+
+

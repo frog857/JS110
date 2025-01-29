@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "PEDAC/PEDAC Shell.md",
+                "file": "JS119Written/LSBot questions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PEDAC Shell"
+              "title": "LSBot questions"
             }
           }
         ]
@@ -160,17 +160,17 @@
   },
   "active": "9cad4cb6a27b2438",
   "lastOpenFiles": [
-    "JS119Written/LSBot questions.md",
     "JS119Written/Exam.md",
+    "JS119Written/LSBot questions.md",
+    "Practice Problems Lesson 1.md",
     "JS119Written/Code snippet practice.md",
+    "PEDAC/PEDAC Shell.md",
     "JS119Written",
     "PEDAC/PEDAC.md",
     "JS119 Written/LSBot questions.md",
     "JS119 Written/Code snippet practice.md",
     "JS119 Written/Exam.md",
-    "Practice Problems Lesson 1.md",
     "Untitled 1.md",
-    "PEDAC/PEDAC Shell.md",
     "JS119 Written"
   ]
 }

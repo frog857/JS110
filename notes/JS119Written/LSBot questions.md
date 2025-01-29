@@ -50,6 +50,7 @@ Within the callback, we console log first the value of `key`, and secondly the v
 
 #3
 
+
 ```javascript
 let str = 'hello';  
 let result = [...str].reduce((acc, char) => {  
@@ -81,3 +82,49 @@ Reduce is a method that returns a single value. In this case, it will be a strin
 Reduce's callback function takes two parameters, an accumulator and a current value, in this case, `acc` and `char` respectively. Recuce will iterate over all items in the calling array, where each return value is used to update the accumulator. At the end, `reduce` will return the value of the accumulator, a single value.
 
 In this case, on each iteration the accumulator is appended with the current character `char` repeated twice, and returned. Thus, after all iterations, the return value will be `hheelloo`, which is assigned to `result` and logged.
+
+# 4
+
+``` javascript
+let arr = [1, 2, 3, 4, 5];  
+let result = arr.filter(num => num > 2)  
+                .map(num => num * 2)  
+                .reduce((sum, num) => sum + num, 0);  
+  
+console.log(result);  
+```
+
+What will be the final output? Walk through each step of the chain and explain what's happening at each stage. What JavaScript concepts are being demonstrated?
+
+The output of this code will be 24. A main concept at play here is *method chaining*, an elegant way to write Javascript whereupon the return value of one method is immediately passed as an input to the next, resulting in readable and streamlined code.
+
+- We first declare a variable `arr` and initialize it to an array containing 5 elements. We then declare a variable `result` and initialize it to the return value of calling several methods on the array stored at `arr`.
+
+- We then call `filter` on our array. This method takes a callback as its parameter. The method performs the callback on each element of the calling array. If the return value of the callback is *truthy*, the element will be included in a returned *shallow copy* of the array. In our case, only elements greater than 2 will return truthy. After the `filter` invocation, we have `[3, 4, 5]`.
+
+- Next, we call `map` on this array of length 3. This method also takes a callback function as its parameter. The method will return a new array of the same length, containing transformed elements, determined by the return value of the callback function. In our case, each element is multiplied by two, and we return a new array: `[6, 8, 10]`.
+
+- Lastly, we call `reduce`. This method takes a callback function and an initial value. The callback uses an accumulator and a current value to reduce the elements in the calling array to a single value (non-destructive). If provided, the initial value serves as the first initialization of the accumulator parameter.
+
+In our case, reduce is used simply to sum up all elements in the array, with an initial value of 0. This results in the final return value, 24, which is assigned to `result` and logged on the last line.
+
+#5
+
+```javascript
+let obj1 = { a: 'hi', b: 'hello' };  
+let obj2 = { b: 'bye', c: 'goodbye' };  
+  
+let combined = { ...obj1, ...obj2, d: 'adios' };  
+  
+console.log(combined);  
+```
+
+What will be the contents of `combined`? Explain the process of how this object is created and what JavaScript feature is being utilized here.
+
+The contents of `combined` will be `{ a: 'hi', b: 'bye', c: 'goodbye', d: 'adios' }`.  The main thing we need to understand here is how the spread syntax works. There are many use cases for the spread syntax. In this case we are spreading one object into another object.
+
+Here, the spread syntax works intuitively for the most part. We are able to spread `obj1` and `obj2` into our `combined` object. However, we have a case of a duplicate property override in the case of property `b`. In `obj1`, this property contains the value `hello`, and in `obj2`, this property contains the value `bye`. 
+
+When there is a duplicate property, the last assignment of the property will be used. Going from left-to-right, we can see that `obj2` will be spread last, and the property will be `b: 'bye'`.
+
+

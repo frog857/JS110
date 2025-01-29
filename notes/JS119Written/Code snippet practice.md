@@ -45,7 +45,7 @@ The following code will output 12 to the console. There are several concepts at 
 
 However, the code `exp(2)(2)` doesn't look like a number at first glance. This expression ultimately will evaluate to `4`, but there are a few steps first.
 
-The function `exp` has one parameter: `num1`. This function then *returns a function* which also has one parameter: `num2`. This inner (anonymous) function will return the result of taking the value assigned to `num1` to the power of `num2`. 
+The function `exp` has one parameter: `num1`. This function *returns a function* which also has one parameter: `num2`. This inner (anonymous) function will return the result of taking the value assigned to `num1` to the power of `num2`. 
 
 Note that the value of `num2` is found as a function-scoped variable (parameter) in the anonymous function, but `num1` is not. `num1` is instead found when javascript looks to the outer scope (In this case, the scope of the function `exp`), where it will find the function-scoped variable `num1`, and its associated value.
 
