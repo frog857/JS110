@@ -8,17 +8,17 @@
         "type": "tabs",
         "children": [
           {
-            "id": "9cad4cb6a27b2438",
+            "id": "3850c643c39b3ece",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "JS119Written/LSBot questions.md",
+                "file": "Method definitions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "LSBot questions"
+              "title": "Method definitions"
             }
           }
         ]
@@ -158,12 +158,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "9cad4cb6a27b2438",
+  "active": "3850c643c39b3ece",
   "lastOpenFiles": [
+    "JS119Written/LSBot-questions-1.md",
+    "JS119Written/LSBot-questions-2.md",
+    "JS119 Assessment.md",
+    "Method definitions.md",
+    "JS119Written/Code-snippet-practice.md",
     "JS119Written/Exam.md",
-    "JS119Written/LSBot questions.md",
     "Practice Problems Lesson 1.md",
-    "JS119Written/Code snippet practice.md",
     "PEDAC/PEDAC Shell.md",
     "JS119Written",
     "PEDAC/PEDAC.md",
