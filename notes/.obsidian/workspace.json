@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "c8d379fb62986242",
+        "id": "5d5becb1bf58276b",
         "type": "tabs",
         "children": [
           {
-            "id": "3850c643c39b3ece",
+            "id": "ada8eee27e56a479",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Method definitions.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Method definitions"
+              "title": "New tab"
             }
           }
         ]
@@ -40,7 +36,8 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
+                "sortOrder": "alphabetical",
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -158,12 +155,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "3850c643c39b3ece",
+  "active": "ada8eee27e56a479",
   "lastOpenFiles": [
+    "Method definitions.md",
+    "matrixBug.md",
+    "Untitled.md",
     "JS119Written/LSBot-questions-1.md",
     "JS119Written/LSBot-questions-2.md",
     "JS119 Assessment.md",
-    "Method definitions.md",
     "JS119Written/Code-snippet-practice.md",
     "JS119Written/Exam.md",
     "Practice Problems Lesson 1.md",
